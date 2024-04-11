@@ -22,6 +22,7 @@ ui <- fluidPage(
     sidebarPanel(
       h3("Data Input and Criteria Settings"),
       fileInput('file1', 'Choose Excel File'),
+      fileInput('file2', 'Choisir un fichier IFC'),
       
       selectInput("xvar", "Choose X-axis variable", 
                   choices = c("Prix", "emission", "Conductivity", "Massevolumique", "Chaleurmassique"), selected = "Conductivity"),
@@ -196,7 +197,32 @@ output$plot <- renderPlotly({
   output$best_solutions_table <- renderDT({
     best_solutions()
   })
- 
+
+  #  Event triggered when we upload ifc file and copy it 
+
+ observeEvent(input$file2, {
+    req(input$file2)  
+    chemin_fichier_ifc <- input$file2$datapath
+    
+    dossier_destination <- "inputs"
+    
+    if (!dir.exists(dossier_destination)) {
+      dir.create(dossier_destination, recursive = TRUE)
+    }
+    
+    nom_fichier <- basename(input$file2$name)  
+    chemin_copie_ifc <- file.path(dossier_destination, nom_fichier)
+    
+    result <- file.copy(chemin_fichier_ifc, chemin_copie_ifc)
+    
+    output$copyStatus <- renderText({
+      if (result) {
+        paste("Le fichier IFC a été copié avec succès dans :", chemin_copie_ifc)
+      } else {
+        "Erreur lors de la copie du fichier."
+      }
+    })
+  })
 }
 
 # Run the application 
