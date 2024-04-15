@@ -65,15 +65,15 @@ ui <- fluidPage(
 # Define Server
 server <- function(input, output, session) {
   
-  materiaux_isolants_df <- reactiveFileReader(intervalMillis = 1000, session, './/materiaux_et_isolants.xlsx', read_excel)
+  materiaux_isolants_df <- reactiveFileReader(intervalMillis = 1000, session, './output/materiaux_et_isolants.xlsx', read_excel)
   materiaux_isolants <- reactivePoll(1000, session,
   checkFunc = function() {
-    if (file.exists('./materiaux_et_isolants.xlsx')) {
-      file.info('./materiaux_et_isolants.xlsx')$mtime
+    if (file.exists('./output/materiaux_et_isolants.xlsx')) {
+      file.info('./output/materiaux_et_isolants.xlsx')$mtime
     }
   },
   valueFunc = function() {
-    read_excel('./materiaux_et_isolants.xlsx')
+    read_excel('./output/materiaux_et_isolants.xlsx')
   }
 )
 output$materialTable <- renderDataTable({
