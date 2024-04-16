@@ -5,13 +5,11 @@ library(ggplot2)
 library(plotly)
 library(dplyr)
 library(websocket)
+library(parallel)
 # if (file.exists("renv/activate.R")) {
 #   source("renv/activate.R")
 # }
 
-
-
-# Define UI
 
 ui <- fluidPage(
 
@@ -20,6 +18,15 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+  # Modal Dialog
+  modalDialog(
+    id = "modal",
+    title = "Répondez aux questions",
+    sliderInput("question1", "What is the ecological impact of the building?:", min = 1, max = 5, value = 3, step = 1),
+    sliderInput("question2", "How would you rate the efficiency of the building?", min = 1, max = 5, value = 3, step = 1),
+    sliderInput("question3", "What is the thermal mass of the building?", min = 1, max = 5, value = 3, step = 1),
+    actionButton("submit", "Soumettre")
+  ),
       h3("Data Input and Criteria Settings"),
       fileInput('file1', 'Choose Excel File'),
       fileInput('file2', 'Choisir un fichier IFC'),
@@ -156,7 +163,7 @@ output$plot <- renderPlotly({
   # Observe calculation button event
  observeEvent(input$calc, {
     df <- data()  # Récupérer les données chargées
-    
+    # print(df)
     if (!is.null(df) && nrow(df) > 0) {
         # Filtrer et calculer les scores en utilisant les valeurs sélectionnées dans les selectInput
         filtered_df <- df %>%
@@ -165,7 +172,7 @@ output$plot <- renderPlotly({
                    Conductivity >= input$conductivity[1] & Conductivity <= input$conductivity[2],
                    Massevolumique >= input$massevolumique[1] & Massevolumique <= input$massevolumique[2],
                    Chaleurmassique >= input$chaleurmassique[1] & Chaleurmassique <= input$chaleurmassique[2])
-        print(nrow(filtered_df))  
+        print(input$prix)  
    
         # Si non, vous devrez les calculer ici comme précédemment
          maxPrix <- max(df$Prix, na.rm = TRUE)
@@ -224,6 +231,15 @@ output$plot <- renderPlotly({
     })
   })
 }
+
+
+script_python <- "./code.py"
+
+executer_script_python <- function() {
+  system(paste("python", script_python))
+}
+
+# parallel::mclapply(1, function(x) executer_script_python(), mc.cores = 1)
 
 # Run the application 
 shinyApp(ui = ui, server = server, options = list(port = 3000))
