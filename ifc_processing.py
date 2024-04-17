@@ -3,6 +3,7 @@ import re
 import pandas as pd
 import os
 
+
 output_folder = './output'
 pattern_isolant = re.compile(r"laine minérale|EPS|polyuréthane|fibre de verre", re.IGNORECASE)
 pattern_materiau = re.compile(r"bois|béton|brique|bloc de béton cellulaire", re.IGNORECASE)
