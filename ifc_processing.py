@@ -24,12 +24,14 @@ def process_ifc_file(ifc_path):
                     for material_layer in material_layer_set.MaterialLayers:
                         material_name = material_layer.Material.Name
                         material_thickness = material_layer.LayerThickness
+                        print( material_name)
                         if pattern_isolant.search(material_name):
                             isolants.add((material_name, material_thickness))
                         elif pattern_materiau.search(material_name):
                             materiaux.add((material_name, material_thickness))
                 elif material_definition.is_a('IfcMaterial'):
                     material_name = material_definition.Name
+                    print( material_name)
                     if pattern_isolant.search(material_name):
                         isolants.add(material_name)
                     elif pattern_materiau.search(material_name):

@@ -10,11 +10,14 @@ server <- function(input, output, session) {
   session$onFlushed(once = TRUE, function() {
     shinyjs::runjs('$("#openModal").click();')
   })
+  ifc_uploaded <- reactiveVal(FALSE)
   # Example reactive file reader (modify the path and read function accordingly)
   materiaux_isolants_df <- reactiveFileReader(intervalMillis = 1000, session, "./output/materiaux_et_isolants.xlsx", read_excel)
   
   output$materialTable <- renderDataTable({
+     if(ifc_uploaded()) {
     materiaux_isolants_df()
+     }
   })
 
   observe({
@@ -68,7 +71,6 @@ server <- function(input, output, session) {
       filtered_df <- calculate_scores(filtered_df, maxPrix, maxEmission, input,criteriaValues )
       best_solution_data <- select_top_solutions(filtered_df)
       best_solutions(best_solution_data)
-      print( criteriaValues$weightPrice)
     }
   })
   
@@ -130,6 +132,7 @@ observeEvent(input$submit, {
 
   observeEvent(input$file2, {
     req(input$file2)
+    ifc_uploaded(TRUE)
     chemin_fichier_ifc <- input$file2$datapath
     dossier_destination <- "inputs"
     if (!dir.exists(dossier_destination)) {
