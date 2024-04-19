@@ -11,3 +11,4 @@ library(parallel)
 library(shinyjs)
 # Variables globales
 excel_path <- './output/materiaux_et_isolants.xlsx'
+folder_input <- "inputs"

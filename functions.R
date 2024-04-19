@@ -25,6 +25,23 @@ get_compatible_isolants <- function(classified_df, model) {
 
   return(isolants_list)
 }
+copy_ifc_file <- function(input , output) {
+    if (!dir.exists(folder_input)) {
+      dir.create(folder_input, recursive = TRUE)
+    }
+    filepath <- input$file2$datapath
+    filename <- basename(input$file2$name)
+    chemin_copie_ifc <- file.path(folder_input, filename)
+    result <- file.copy(filepath, chemin_copie_ifc)
+    output$copyStatus <- renderText({
+      if (result) {
+        paste("Le fichier IFC a été copié avec succès dans :", chemin_copie_ifc)
+      } else {
+        "Erreur lors de la copie du fichier."
+      }
+  })
+
+}
 
 
 filter_data <- function(df, input) {

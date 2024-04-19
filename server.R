@@ -133,20 +133,6 @@ observeEvent(input$submit, {
   observeEvent(input$file2, {
     req(input$file2)
     ifc_uploaded(TRUE)
-    chemin_fichier_ifc <- input$file2$datapath
-    dossier_destination <- "inputs"
-    if (!dir.exists(dossier_destination)) {
-      dir.create(dossier_destination, recursive = TRUE)
-    }
-    nom_fichier <- basename(input$file2$name)
-    chemin_copie_ifc <- file.path(dossier_destination, nom_fichier)
-    result <- file.copy(chemin_fichier_ifc, chemin_copie_ifc)
-    output$copyStatus <- renderText({
-      if (result) {
-        paste("Le fichier IFC a été copié avec succès dans :", chemin_copie_ifc)
-      } else {
-        "Erreur lors de la copie du fichier."
-      }
+    copy_ifc_file(input , output )
     })
-  })
 }
