@@ -21,7 +21,7 @@ get_compatible_isolants <- function(classified_df, model) {
     pull(Isolants) %>%
     unlist() %>%
     strsplit(split = ", ") %>%
-    unlist()
+    unlist()  
 
   return(isolants_list)
 }
