@@ -54,7 +54,7 @@ filter_data <- function(df, input) {
                Chaleurmassique >= input$minChaleurmassique & Chaleurmassique <= input$maxChaleurmassique)
 }
 
-  calculate_scores <- function(df, maxPrix, maxEmission, input, criteriaValues) {
+calculate_scores <- function(df, maxPrix, maxEmission, input, criteriaValues) {
     data_construction <- read_excel(excel_path)
     construction_model <- data_construction$`Matériaux de Construction`[1]
     compatible_isolants <- get_compatible_isolants(isolants_classified_df, construction_model)
@@ -63,17 +63,17 @@ filter_data <- function(df, input) {
     weightConductivity <- if(is.numeric(criteriaValues$weightConductivity)) criteriaValues$weightConductivity else 1.5
     weightDensity <- if(is.numeric(criteriaValues$weightDensity)) criteriaValues$weightDensity else 1.5
     weightSpecificHeat <- if(is.numeric(criteriaValues$weightSpecificHeat)) criteriaValues$weightSpecificHeat else 1.5
-    df <- df %>%
-    filter(Nom_Matériau %in% compatible_isolants)
-    df %>%
-        mutate(score = ((maxPrix - Prix) / maxPrix * weightPrice) + 
-                 ((maxEmission - emission) / maxEmission * weightEmission) + 
-                 (Conductivity / max(df$Conductivity, na.rm = TRUE) * weightConductivity) +
-                 (Massevolumique / max(df$Massevolumique, na.rm = TRUE) * weightDensity) +
-                 (Chaleurmassique / max(df$Chaleurmassique, na.rm = TRUE) * weightSpecificHeat))
-}
-    print(df)
 
+    df <- df %>%
+      dplyr::filter(Nom_Matériau %in% compatible_isolants) %>%
+      dplyr::mutate(score = ((maxPrix - Prix) / maxPrix * weightPrice) + 
+                     ((maxEmission - emission) / maxEmission * weightEmission) + 
+                     (Conductivity / max(df$Conductivity, na.rm = TRUE) * weightConductivity) +
+                     (Massevolumique / max(df$Massevolumique, na.rm = TRUE) * weightDensity) +
+                     (Chaleurmassique / max(df$Chaleurmassique, na.rm = TRUE) * weightSpecificHeat))
+                     
+    write.xlsx(df, file = "isolants.xlsx", rowNames = FALSE)
+}
 
 
 select_top_solutions <- function(df) {
@@ -83,7 +83,7 @@ select_top_solutions <- function(df) {
 }
 getWeightValue <- function(inputValue) {
     switch(as.character(inputValue),
-           "2" = 1.5,  
+           "2" = 1,  
            "3" = 2.5,  
            "4" = 3.5, 
            "5" = 4.5,  

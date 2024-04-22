@@ -39,7 +39,7 @@ server <- function(input, output, session) {
   }
 
   output$materialTable <- renderDataTable({
-    req(excel_uploaded(), ifc_uploaded())  
+    req(input$file2)
     materiaux_isolants_df()
   })
 

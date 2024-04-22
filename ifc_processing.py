@@ -5,7 +5,7 @@ import os
 
 
 output_folder = './output'
-pattern_isolant = re.compile(r"laine minérale|EPS|polyuréthane|fibre de verre", re.IGNORECASE)
+# pattern_isolant = re.compile(r"laine minérale|EPS|polyuréthane|fibre de verre", re.IGNORECASE)
 pattern_materiau = re.compile(r"bois|béton|brique|bloc de béton cellulaire", re.IGNORECASE)
 
 def process_ifc_file(ifc_path):
@@ -25,17 +25,17 @@ def process_ifc_file(ifc_path):
                         material_name = material_layer.Material.Name
                         material_thickness = material_layer.LayerThickness
                         print( material_name)
-                        if pattern_isolant.search(material_name):
-                            isolants.add((material_name, material_thickness))
-                        elif pattern_materiau.search(material_name):
+                        if pattern_materiau.search(material_name):
                             materiaux.add((material_name, material_thickness))
+                        else :
+                            isolants.add((material_name, material_thickness))
                 elif material_definition.is_a('IfcMaterial'):
                     material_name = material_definition.Name
                     print( material_name)
-                    if pattern_isolant.search(material_name):
-                        isolants.add(material_name)
-                    elif pattern_materiau.search(material_name):
+                    if pattern_materiau.search(material_name):
                         materiaux.add(material_name)
+                    else:
+                        isolants.add(material_name)
 
     df_materiaux = pd.DataFrame(list(materiaux), columns=['Matériaux de Construction', 'Épaisseur Matériaux (mm)'])
     df_isolants = pd.DataFrame(list(isolants), columns=['Isolants', 'Épaisseur Isolants (mm)'])
