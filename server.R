@@ -88,6 +88,8 @@ observeEvent(input$calc, {
       filtered_df <- calculate_scores(filtered_df, maxPrix, maxEmission, input, criteriaValues)
       best_solution_data <- select_top_solutions(filtered_df)
       best_solutions(best_solution_data)
+      write.xlsx(best_solution_data, file = "isolants.xlsx", rowNames = FALSE)
+
     }
   })
 
@@ -104,39 +106,8 @@ observe({
         shinyjs::runjs('$("#openModal").click();')
   })
   
-observeEvent(input$openModal, {
-    showModal(modalDialog(
-        title = "Evaluate the Importance of Each Criterion",
-        radioButtons("weightPrice", 
-                     "How important is the cost factor in your overall assessment of the building?",
-                     choices = c("Medium" = 2, "High" = 3, "Very High" = 4, "Excellent" = 5),
-                    selected = 2),
-        
-        radioButtons("weightEmission", 
-                     "How important are emission levels for assessing the building's environmental impact?",
-                     choices = c("Medium" = 2, "High" = 3, "Very High" = 4, "Excellent" = 5),
-                    selected = 2),
-        
-        radioButtons("weightConductivity", 
-                     "How critical is thermal conductivity in the efficiency assessment of the building?",
-                     choices = c("Medium" = 2, "High" = 3, "Very High" = 4, "Excellent" = 5),
-                    selected = 2),
-        
-        radioButtons("weightDensity", 
-                     "What is the significance of material density in the construction quality of the building?",
-                     choices = c("Medium" = 2, "High" = 3, "Very High" = 4, "Excellent" = 5),
-                    selected = 2),
-        
-        radioButtons("weightSpecificHeat", 
-                     "How important is the specific heat capacity of materials in the building’s energy efficiency?",
-                     choices = c("Medium" = 2, "High" = 3, "Very High" = 4, "Excellent" = 5),
-                    selected = 2),
-        footer = tagList(
-            modalButton("Close"),
-            actionButton("submit", "Submit")
-        )
-    ))
-})
+
+
 
 
 observeEvent(input$submit, {
@@ -145,7 +116,8 @@ observeEvent(input$submit, {
     criteriaValues$weightConductivity <- getWeightValue(input$weightConductivity)
     criteriaValues$weightDensity <- getWeightValue(input$weightDensity)
     criteriaValues$weightSpecificHeat <- getWeightValue(input$weightSpecificHeat)
-    removeModal() 
+    updateTabsetPanel(session, "mainTabset", selected = "Data Input and Visualization")
+
 })
   observeEvent(input$file1, {
     req(input$file1)

@@ -72,7 +72,6 @@ calculate_scores <- function(df, maxPrix, maxEmission, input, criteriaValues) {
                      (Massevolumique / max(df$Massevolumique, na.rm = TRUE) * weightDensity) +
                      (Chaleurmassique / max(df$Chaleurmassique, na.rm = TRUE) * weightSpecificHeat))
                      
-    write.xlsx(df, file = "isolants.xlsx", rowNames = FALSE)
 }
 
 
@@ -80,6 +79,8 @@ select_top_solutions <- function(df) {
   df %>%
     arrange(desc(score)) %>%
     slice(1:3)
+
+
 }
 getWeightValue <- function(inputValue) {
     switch(as.character(inputValue),
