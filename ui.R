@@ -51,7 +51,7 @@ ui <- fluidPage(
     ),
     tabPanel("Criteria Evaluation", value="evaluationTab", 
       fluidPage(
-         title = "Evaluate the Importance of Each Criterion",
+          h3("Evaluate the Importance of Each Criterion"),
         radioButtons("weightPrice", 
                      "How important is the cost factor in your overall assessment of the building?",
                      choices = c("Medium" = 2, "High" = 3, "Very High" = 4, "Excellent" = 5),

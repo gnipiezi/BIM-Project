@@ -80,6 +80,7 @@ server <- function(input, output, session) {
   })
   
 observeEvent(input$calc, {
+    req(excel_uploaded() && ifc_uploaded())
     df <- excel_data()
     if (!is.null(df) && nrow(df) > 0) {
       filtered_df <- filter_data(df, input)

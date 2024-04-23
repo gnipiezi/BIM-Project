@@ -3,11 +3,11 @@ from watchdog_handlers import IFCFileHandler, ExcelChangeHandler
 import os
 import time
 import pandas as pd
-from config import input_folder, file_to_watch
+from config import input_folder, file_to_watch , output_folder
 import subprocess
 folder_path = os.path.dirname(file_to_watch)
 
-event_handler = ExcelChangeHandler(file_to_watch)
+event_handler = ExcelChangeHandler(file_to_watch , input_folder ,output_folder)
 observer = Observer()
 observer.schedule(event_handler, folder_path, recursive=False)
 

@@ -1,9 +1,10 @@
 import ifcopenshell
-import re
 import pandas as pd
 import os
+import time
 from pathlib import Path
 from zipfile import BadZipFile
+
 def gen_ifc_file(excel_path, ifc_path, output_folder):
     if Path(excel_path).exists() and Path(excel_path).suffix == '.xlsx':
         try:
@@ -13,8 +14,9 @@ def gen_ifc_file(excel_path, ifc_path, output_folder):
 
             ifc_file = ifcopenshell.open(ifc_path)
             walls = ifc_file.by_type('IfcWall')
+            all_files_written = True  
 
-            for index, row in df_isolants.head(3).iterrows():
+            for index, row in df_isolants.iterrows():
                 new_isolant_name = row[df_isolants.columns[0]]
 
                 for wall in walls:
@@ -29,13 +31,20 @@ def gen_ifc_file(excel_path, ifc_path, output_folder):
 
                 new_ifc_filename = f"{new_isolant_name.replace(' ', '_')}.ifc"
                 new_ifc_path = os.path.join(output_folder, new_ifc_filename)
-                ifc_file.write(new_ifc_path)
-                print(f"Le fichier IFC avec le nouvel isolant '{new_isolant_name}' a été sauvegardé sous : {new_ifc_path}")
-                # os.remove(excel_path)
+                try:
+                    ifc_file.write(new_ifc_path)
+                    print(f"Le fichier IFC avec le nouvel isolant '{new_isolant_name}' a été sauvegardé sous : {new_ifc_path}")
+                    time.sleep(1)  
+                except Exception as e:
+                    print(f"Erreur lors de l'écriture du fichier '{new_ifc_filename}': {e}")
+                    all_files_written = False  #
+
+            if all_files_written:
+                os.remove(ifc_path)  
+                print("Le fichier IFC original a été supprimé avec succès.")
         except BadZipFile:
             print("Le fichier n'est pas un fichier ZIP valide, vérifiez qu'il s'agit d'un fichier .xlsx et qu'il n'est pas corrompu.")
         except Exception as e:
             print(f"Une erreur est survenue : {e}")
     else:
-            print("Le fichier spécifié n'existe pas ou n'est pas un fichier .xlsx")
-  
+        print("Le fichier spécifié n'existe pas ou n'est pas un fichier .xlsx")

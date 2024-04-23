@@ -46,5 +46,4 @@ def process_ifc_file(ifc_path):
     filename = os.path.join(output_folder, 'materiaux_et_isolants.xlsx')
     df_final.to_excel(filename, index=False)
     print(f"Les matériaux et isolants des murs extérieurs ont été écrits dans {filename}")
-    os.remove(ifc_path)
 
