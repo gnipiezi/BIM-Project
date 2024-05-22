@@ -5,6 +5,7 @@ import os
 
 output_folder = './output'
 pattern_materiau = re.compile(r"bois|béton|brique|bloc de béton cellulaire", re.IGNORECASE)
+pattern_isolant = re.compile(r"Isolant", re.IGNORECASE)
 
 exterior_keywords = ['exterior', 'outside', 'façade', 'external', 'extérieur']
 
@@ -29,15 +30,15 @@ def process_ifc_file(ifc_path):
                     for material_layer in material_layer_set.MaterialLayers:
                         material_name = material_layer.Material.Name
                         material_thickness = material_layer.LayerThickness
-                        if pattern_materiau.search(material_name):
+                        if pattern_materiau.search(material_name) and not pattern_isolant.search(material_name):
                             materiaux.add((material_name, material_thickness))
-                        elif is_exterior_wall(wall_name):  # Appliquer le filtrage extérieur uniquement ici
+                        elif is_exterior_wall(wall_name) or pattern_isolant.search(material_name):  # Appliquer le filtrage extérieur uniquement ici
                             isolants.add((material_name, material_thickness))
                 elif material_definition.is_a('IfcMaterial'):
                     material_name = material_definition.Name
-                    if pattern_materiau.search(material_name):
+                    if pattern_materiau.search(material_name) and not pattern_isolant.search(material_name):
                         materiaux.add(material_name)
-                    elif is_exterior_wall(wall_name):  # Appliquer le filtrage extérieur uniquement ici
+                    elif is_exterior_wall(wall_name) or pattern_isolant.search(material_name):  # Appliquer le filtrage extérieur uniquement ici
                         isolants.add(material_name)
 
     df_materiaux = pd.DataFrame(list(materiaux), columns=['Matériaux de Construction', 'Épaisseur Matériaux (mm)'])
